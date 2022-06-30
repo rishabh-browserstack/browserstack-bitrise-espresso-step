@@ -12,17 +12,6 @@ type TestSharding struct {
 	AutoStrategyDevices []string      `json:"devices,omitempty"`
 }
 
-type TestCases struct {
-	Count  int                    `json:"count,omitempty"`
-	Status map[string]interface{} `json:"status,omitempty"`
-}
-
-type Sessions struct {
-	Id        string `json:"id"`
-	Status    string `json:"status"`
-	TestCases string `json:"start_time"`
-}
-
 type BrowserStackPayload struct {
 	App                    string      `json:"app"`
 	TestSuite              string      `json:"testSuite"`
@@ -44,7 +33,12 @@ type BrowserStackPayload struct {
 	UseMockServer          bool        `json:"allowDeviceMockServer,omitempty"`
 	UseTestSharding        interface{} `json:"shards,omitempty"`
 
-	// non ui fields
+	// Apart from the inputs from UI, these are some more fields which we support.
+	// We've mentioned the type and the json key for these field.
+	// We don't have seperate inputs field for each of them,
+	// instead we have one field which can accept all these values,
+	// which we dynamically add to our payload with the help of a function `appendExtraCapabilities`.
+
 	// EnableSpoonFramework  bool     `json:"enableSpoonFramework,omitempty"`
 	// GpsLocation           string   `json:"gpsLocation,omitempty"`
 	// GeoLocation           string   `json:"geoLocation,omitempty"`

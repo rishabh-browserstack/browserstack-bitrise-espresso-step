@@ -22,7 +22,7 @@ func build(app_url string, test_suite_url string, username string, access_key st
 	payload_values.App = app_url
 	payload_values.TestSuite = test_suite_url
 
-	payload, err := json.Marshal(payload_values)
+	payload, _ := json.Marshal(payload_values)
 
 	final_payload := appendExtraCapabilities(string(payload))
 
@@ -62,6 +62,10 @@ func upload(app_path string, endpoint string, username string, access_key string
 	multipart_writer := multipart.NewWriter(payload)
 	file, fileErr := os.Open(app_path)
 
+	if fileErr != nil {
+		return "", errors.New(FILE_NOT_AVAILABLE_ERROR)
+	}
+
 	defer file.Close()
 
 	// creates a new form data header
@@ -69,6 +73,9 @@ func upload(app_path string, endpoint string, username string, access_key string
 	attached_file,
 		fileErr := multipart_writer.CreateFormFile("file", filepath.Base(app_path))
 
+	if fileErr != nil {
+		return "", errors.New(FILE_NOT_AVAILABLE_ERROR)
+	}
 	_, fileErr = io.Copy(attached_file, file)
 
 	if fileErr != nil {
@@ -147,7 +154,12 @@ func checkBuildStatus(build_id string, username string, access_key string, waitF
 			return
 		}
 
-		json.Unmarshal([]byte(body), &build_parsed_response)
+		unmarshal_err := json.Unmarshal([]byte(body), &build_parsed_response)
+
+		if unmarshal_err != nil {
+			build_status_error = errors.New(fmt.Sprintf(HTTP_ERROR, err))
+			return
+		}
 
 		if build_parsed_response["error"] != nil && build_parsed_response["error"] != "" {
 			build_status_error = errors.New(fmt.Sprintf(FETCH_BUILD_STATUS_ERROR, build_parsed_response["error"]))

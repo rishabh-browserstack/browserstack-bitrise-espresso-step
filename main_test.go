@@ -57,7 +57,7 @@ func TestUpload(t *testing.T) {
 }
 
 func TestCheckBuildStatus(t *testing.T) {
-	t.Log("It should throw if build_id is not passed")
+	t.Log("It should throw FETCH_BUILD_STATUS_ERROR if build_id is not passed")
 	{
 
 		build, err := checkBuildStatus("", "username", "password", false)

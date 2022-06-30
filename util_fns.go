@@ -42,7 +42,11 @@ func appendExtraCapabilities(payload string) []byte {
 
 	out := map[string]interface{}{}
 
-	json.Unmarshal([]byte(payload), &out)
+	unmarshal_error := json.Unmarshal([]byte(payload), &out)
+
+	if unmarshal_error != nil {
+		failf(fmt.Sprintf(HTTP_ERROR, unmarshal_error))
+	}
 
 	scanner := bufio.NewScanner(strings.NewReader(os.Getenv("api_params")))
 	for scanner.Scan() {
