@@ -35,7 +35,7 @@ type BrowserStackPayload struct {
 
 	// Apart from the inputs from UI, these are some more fields which we support.
 	// We've mentioned the type and the json key for these field.
-	// We don't have seperate inputs field for each of them,
+	// We don't have separate inputs field for each of them,
 	// instead we have one field which can accept all these values,
 	// which we dynamically add to our payload with the help of a function `appendExtraCapabilities`.
 

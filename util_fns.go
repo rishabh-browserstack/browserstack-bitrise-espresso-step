@@ -32,21 +32,16 @@ func getDevices() ([]string, error) {
 		}
 
 		devices = append(devices, device)
-
 	}
+
 	return devices, nil
 }
 
 // any other capability which we're not taking from pre-defined inputs can be passed in api_params
 func appendExtraCapabilities(payload string) []byte {
-
 	out := map[string]interface{}{}
 
-	unmarshal_error := json.Unmarshal([]byte(payload), &out)
-
-	if unmarshal_error != nil {
-		failf(fmt.Sprintf(HTTP_ERROR, unmarshal_error))
-	}
+	json.Unmarshal([]byte(payload), &out)
 
 	scanner := bufio.NewScanner(strings.NewReader(os.Getenv("api_params")))
 	for scanner.Scan() {
@@ -63,16 +58,14 @@ func appendExtraCapabilities(payload string) []byte {
 		key := test_values[0]
 
 		out[key] = test_values[1]
-
 	}
 
 	outputJSON, _ := json.Marshal(out)
-	return outputJSON
 
+	return outputJSON
 }
 
 func getTestFilters(payload *BrowserStackPayload) {
-
 	scanner := bufio.NewScanner(strings.NewReader(os.Getenv("filter_test")))
 	for scanner.Scan() {
 		test_sharding := scanner.Text()
@@ -86,7 +79,6 @@ func getTestFilters(payload *BrowserStackPayload) {
 		test_values := strings.Split(test_sharding, ",")
 
 		for i := 0; i < len(test_values); i++ {
-
 			test_value := strings.Split(test_values[i], " ")
 			switch test_value[0] {
 			case "class":
@@ -99,9 +91,7 @@ func getTestFilters(payload *BrowserStackPayload) {
 				*&payload.Size = append(*&payload.Size, test_value[1])
 			}
 		}
-
 	}
-
 }
 
 // this util only picks data from env and map it to the struct
@@ -158,7 +148,6 @@ func failf(format string, args ...interface{}) {
 // this works as a goroutine which will run in background
 // on a different thread without effecting any other code
 func setInterval(someFunc func(), milliseconds int, async bool) chan bool {
-
 	// How often to fire the passed in function
 	// in milliseconds
 	interval := time.Duration(milliseconds) * time.Millisecond
@@ -172,7 +161,6 @@ func setInterval(someFunc func(), milliseconds int, async bool) chan bool {
 	// so that the for loop is none blocking
 	go func() {
 		for {
-
 			select {
 			case <-ticker.C:
 				if async {
@@ -184,16 +172,13 @@ func setInterval(someFunc func(), milliseconds int, async bool) chan bool {
 				}
 			case <-clear:
 				ticker.Stop()
-				// return
 			}
-
 		}
 	}()
 
 	// We return the channel so we can pass in
 	// a value to it to clear the interval
 	return clear
-
 }
 
 func jsonParse(base64String string) map[string]interface{} {
@@ -210,7 +195,6 @@ func jsonParse(base64String string) map[string]interface{} {
 
 // this function only print data to the console.
 func printBuildStatus(build_details map[string]interface{}) {
-
 	log.Println("Build finished")
 	log.Println("Test results summary:")
 
@@ -218,7 +202,6 @@ func printBuildStatus(build_details map[string]interface{}) {
 	build_id := build_details["id"]
 
 	if len(devices) == 1 {
-
 		sessions := devices[0].(map[string]interface{})["sessions"].([]interface{})[0].(map[string]interface{})
 
 		session_status := sessions["status"].(string)
@@ -234,13 +217,11 @@ func printBuildStatus(build_details map[string]interface{}) {
 
 		if session_status == "passed" {
 			log.Printf("%s                %s                PASSED (%v/%v passed)", build_id, device_name, passed_test, total_test)
-
 		}
 
 		if session_status == "failed" || session_status == "error" {
 			log.Printf("%s                %s                FAILED (%v/%v passed)", build_id, device_name, passed_test, total_test)
 		}
-
 	} else {
 		for i := 0; i < len(devices); i++ {
 			sessions := devices[i].(map[string]interface{})["sessions"].([]interface{})[0].(map[string]interface{})
@@ -256,7 +237,6 @@ func printBuildStatus(build_details map[string]interface{}) {
 			log.Print("Build Id                                            Devices                                            Status")
 			if session_status == "passed" {
 				log.Printf("%s                %s                PASSED (%v/%v passed)", build_id, device_name, passed_test, total_test)
-
 			}
 
 			if session_status == "failed" || session_status == "error" {

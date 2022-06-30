@@ -1,4 +1,0 @@
-- repo: https://github.com/dnephin/pre-commit-golang
-  rev: master
-  hooks:.pre-commit-config.ym
-    - id: golangci-lint

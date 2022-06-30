@@ -76,6 +76,7 @@ func upload(app_path string, endpoint string, username string, access_key string
 	if fileErr != nil {
 		return "", errors.New(FILE_NOT_AVAILABLE_ERROR)
 	}
+
 	_, fileErr = io.Copy(attached_file, file)
 
 	if fileErr != nil {
@@ -113,7 +114,6 @@ func upload(app_path string, endpoint string, username string, access_key string
 }
 
 func checkBuildStatus(build_id string, username string, access_key string, waitForBuild bool) (string, error) {
-
 	if build_id == "" {
 		return "", errors.New(fmt.Sprintf(FETCH_BUILD_STATUS_ERROR, "invalid build_id"))
 	}
@@ -127,11 +127,12 @@ func checkBuildStatus(build_id string, username string, access_key string, waitF
 
 	build_parsed_response := make(map[string]interface{})
 	build_status := ""
+
 	var body []byte
+
 	var build_status_error error
 
 	clear := setInterval(func() {
-
 		client := &http.Client{}
 		req, _ := http.NewRequest("GET", BROWSERSTACK_DOMAIN+APP_AUTOMATE_BUILD_STATUS_ENDPOINT+build_id, nil)
 
@@ -167,12 +168,10 @@ func checkBuildStatus(build_id string, username string, access_key string, waitF
 		}
 
 		build_status = build_parsed_response["status"].(string)
-
 	}, POOLING_INTERVAL, false)
 
 	// infinite loop -> consider this as a ticker
 	for {
-
 		if build_status != "running" && build_status != "" {
 			// Stop the ticket, ending the interval go routine
 			clear <- true
@@ -188,11 +187,9 @@ func checkBuildStatus(build_id string, username string, access_key string, waitF
 		// }
 
 		if build_status_error != nil || (!waitForBuild && build_status != "") {
-
 			clear <- true
 
 			return build_status, build_status_error
 		}
 	}
-
 }
