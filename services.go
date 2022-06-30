@@ -38,8 +38,7 @@ func build(app_url string, test_suite_url string, username string, access_key st
 	res, err := client.Do(req)
 
 	if err != nil {
-		// Todo: confirm this error
-		return "", errors.New(fmt.Sprintf(BUILD_FAILED_ERROR, err))
+		return "", errors.New(fmt.Sprintf(HTTP_ERROR, err))
 	}
 
 	defer res.Body.Close()
@@ -47,8 +46,7 @@ func build(app_url string, test_suite_url string, username string, access_key st
 	body, err := ioutil.ReadAll(res.Body)
 
 	if err != nil {
-		// Todo: confirm this error
-		return "", errors.New(fmt.Sprintf(BUILD_FAILED_ERROR, err))
+		return "", errors.New(fmt.Sprintf(HTTP_ERROR, err))
 	}
 
 	return string(body), nil
@@ -93,7 +91,7 @@ func upload(app_path string, endpoint string, username string, access_key string
 	res, err := client.Do(req)
 
 	if err != nil {
-		return "", errors.New(fmt.Sprintf(UPLOAD_APP_ERROR, err))
+		return "", errors.New(fmt.Sprintf(HTTP_ERROR, err))
 	}
 
 	defer res.Body.Close()
@@ -101,16 +99,23 @@ func upload(app_path string, endpoint string, username string, access_key string
 	body, err := ioutil.ReadAll(res.Body)
 
 	if err != nil {
-		return "", errors.New(fmt.Sprintf(UPLOAD_APP_ERROR, err))
+		return "", errors.New(fmt.Sprintf(HTTP_ERROR, err))
 	}
 
 	return string(body), nil
 }
 
-func checkBuildStatus(build_id string, username string, access_key string) (string, error) {
+func checkBuildStatus(build_id string, username string, access_key string, waitForBuild bool) (string, error) {
 
 	if build_id == "" {
 		return "", errors.New(fmt.Sprintf(FETCH_BUILD_STATUS_ERROR, "invalid build_id"))
+	}
+
+	// ticker can't have negative value
+	var POOLING_INTERVAL int = 10
+
+	if waitForBuild {
+		POOLING_INTERVAL = POOLING_INTERVAL_IN_MS
 	}
 
 	build_parsed_response := make(map[string]interface{})
@@ -129,7 +134,7 @@ func checkBuildStatus(build_id string, username string, access_key string) (stri
 		res, err := client.Do(req)
 
 		if err != nil {
-			build_status_error = errors.New(fmt.Sprintf(FETCH_BUILD_STATUS_ERROR, err))
+			build_status_error = errors.New(fmt.Sprintf(HTTP_ERROR, err))
 			return
 		}
 
@@ -138,7 +143,7 @@ func checkBuildStatus(build_id string, username string, access_key string) (stri
 		body, err = ioutil.ReadAll(res.Body)
 
 		if err != nil {
-			build_status_error = errors.New(fmt.Sprintf(FETCH_BUILD_STATUS_ERROR, err))
+			build_status_error = errors.New(fmt.Sprintf(HTTP_ERROR, err))
 			return
 		}
 
@@ -151,19 +156,26 @@ func checkBuildStatus(build_id string, username string, access_key string) (stri
 
 		build_status = build_parsed_response["status"].(string)
 
-	}, POOLING_INTERVAL_IN_MS, false)
+	}, POOLING_INTERVAL, false)
 
 	// infinite loop -> consider this as a ticker
 	for {
+
 		if build_status != "running" && build_status != "" {
 			// Stop the ticket, ending the interval go routine
 			clear <- true
+
 			printBuildStatus(build_parsed_response)
 
 			return build_status, build_status_error
 		}
 
-		if build_status_error != nil {
+		// if !waitForBuild && build_status != "" {
+		// 	clear <- true
+		// 	return build_status, build_status_error
+		// }
+
+		if build_status_error != nil || (!waitForBuild && build_status != "") {
 
 			clear <- true
 

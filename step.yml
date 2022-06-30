@@ -281,20 +281,17 @@ inputs:
       
 
 outputs:
-  - BUILD_ID:
+  - BROWSERSTACK_BUILD_URL:
     opts:
-      title: "Build Id"
-      summary: Bs build id
-      description: |
-        Description of this output.
-
-        Can be Markdown formatted text.
-  - BUILD_STATUS:
+      title: "BrowserStack Dashboard url"
+      summary: ""
+      description: "BrowserStack Dashboard url for the executed build"
+  - BROWSERSTACK_BUILD_STATUS:
     opts:
-      title: "Build Status"
+      title: "BrowserStack Build Status"
       summary: Bs build status
-      description: |
-        Description of this output.
+      description: | 
+        Status of the executed build. Check values [here:] (https://www.browserstack.com/docs/app-automate/espresso/view-test-results)
 
-        Can be Markdown formatted text.
+
 

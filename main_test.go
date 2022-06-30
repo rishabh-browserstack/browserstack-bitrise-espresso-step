@@ -60,7 +60,7 @@ func TestCheckBuildStatus(t *testing.T) {
 	t.Log("It should throw if build_id is not passed")
 	{
 
-		build, err := checkBuildStatus("", "username", "password")
+		build, err := checkBuildStatus("", "username", "password", false)
 		t.Log(build, err)
 		require.Equal(t, "", build)
 		require.Error(t, err)
@@ -68,7 +68,7 @@ func TestCheckBuildStatus(t *testing.T) {
 	t.Log("It should throw unauthorized error while checking build status")
 	{
 		expected := map[string]interface{}{"message": "unautorized"}
-		build, err := checkBuildStatus(SAMPLE_BUILD_ID, "username", "password")
+		build, err := checkBuildStatus(SAMPLE_BUILD_ID, "username", "password", false)
 
 		require.Equal(t, "", build)
 

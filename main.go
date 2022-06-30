@@ -66,22 +66,36 @@ func main() {
 
 	check_build_status, _ := strconv.ParseBool(os.Getenv("check_build_status"))
 
-	if check_build_status {
+	build_status := ""
 
-		build_id := build_parsed_response["build_id"].(string)
+	// if check_build_status {
 
-		log.Printf("Build is running (BrowserStack build id %s)", build_id)
+	build_id := build_parsed_response["build_id"].(string)
 
-		_, err := checkBuildStatus(build_id, username, access_key)
+	log.Println("Waiting for results")
 
-		if err != nil {
-			failf(err.Error())
-		}
+	log.Printf("Build is running (BrowserStack build id %s)", build_id)
 
+	build_status, err = checkBuildStatus(build_id, username, access_key, check_build_status)
+
+	if err != nil {
+		failf(err.Error())
 	}
 
-	cmd_log_build_id, err_build_id := exec.Command("bitrise", "envman", "add", "--key", "BUILD_ID", "--value", build_parsed_response["build_id"].(string)).CombinedOutput()
-	cmd_log_build_status, err_build_status := exec.Command("bitrise", "envman", "add", "--key", "BUILD_STATUS", "--value", build_parsed_response["message"].(string)).CombinedOutput()
+	// } else {
+	// 	build_id := build_parsed_response["build_id"].(string)
+
+	// 	log.Printf("Build is running (BrowserStack build id %s)", build_id)
+
+	// 	build_status, err = checkBuildStatus(build_id, username, access_key, false)
+
+	// 	if err != nil {
+	// 		failf(err.Error())
+	// 	}
+	// }
+
+	cmd_log_build_id, err_build_id := exec.Command("bitrise", "envman", "add", "--key", "BROWSERSTACK_BUILD_URL", "--value", APP_AUTOMATE_BUILD_DASHBOARD_URL+build_parsed_response["build_id"].(string)).CombinedOutput()
+	cmd_log_build_status, err_build_status := exec.Command("bitrise", "envman", "add", "--key", "BROWSERSTACK_BUILD_STATUS", "--value", build_status).CombinedOutput()
 
 	if err_build_id != nil {
 		fmt.Printf("Failed to expose output with envman, error: %#v | output: %s", err, cmd_log_build_id)
