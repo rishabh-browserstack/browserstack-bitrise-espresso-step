@@ -59,6 +59,7 @@ func appendExtraCapabilities(payload string) []byte {
 
 		if key == "cucumberOptions" {
 			var jsonMap map[string]interface{}
+
 			json.Unmarshal([]byte(test_values[1]), &jsonMap)
 			out[key] = jsonMap
 		} else {
