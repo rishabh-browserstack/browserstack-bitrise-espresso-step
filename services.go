@@ -59,12 +59,6 @@ func upload(app_path string, endpoint string, username string, access_key string
 		return "", errors.New(FILE_NOT_AVAILABLE_ERROR)
 	}
 
-	if endpoint == APP_UPLOAD_ENDPOINT {
-		log.Print("Uploading app on BrowserStack App Automate")
-	} else {
-		log.Print("Uploading test suite on BrowserStack App Automate")
-	}
-
 	payload := &bytes.Buffer{}
 	multipart_writer := multipart.NewWriter(payload)
 	file, fileErr := os.Open(app_path)
@@ -117,12 +111,6 @@ func upload(app_path string, endpoint string, username string, access_key string
 		return "", errors.New(fmt.Sprintf(HTTP_ERROR, err))
 	}
 
-	if endpoint == APP_UPLOAD_ENDPOINT {
-		log.Print("Successfully uploaded the app")
-	} else {
-		log.Print("Successfully uploaded the test suite")
-	}
-
 	return string(body), nil
 }
 
@@ -131,8 +119,12 @@ func checkBuildStatus(build_id string, username string, access_key string, waitF
 		return "", errors.New(fmt.Sprintf(FETCH_BUILD_STATUS_ERROR, "invalid build_id"))
 	}
 
+	if waitForBuild {
+		log.Println("Waiting for results")
+	}
+
 	// ticker can't have negative value
-	var POOLING_INTERVAL int = 10
+	var POOLING_INTERVAL int = 1000
 
 	if waitForBuild {
 		POOLING_INTERVAL = POOLING_INTERVAL_IN_MS
@@ -179,6 +171,8 @@ func checkBuildStatus(build_id string, username string, access_key string, waitF
 			build_status_error = errors.New(fmt.Sprintf(FETCH_BUILD_STATUS_ERROR, build_parsed_response["error"]))
 			return
 		}
+
+		log.Printf("Build is running (BrowserStack build id %s)", build_id)
 
 		build_status = build_parsed_response["status"].(string)
 	}, POOLING_INTERVAL, false)
