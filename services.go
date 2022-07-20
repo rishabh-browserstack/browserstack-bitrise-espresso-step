@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -56,6 +57,12 @@ func build(app_url string, test_suite_url string, username string, access_key st
 func upload(app_path string, endpoint string, username string, access_key string) (string, error) {
 	if app_path == "" {
 		return "", errors.New(FILE_NOT_AVAILABLE_ERROR)
+	}
+
+	if endpoint == APP_UPLOAD_ENDPOINT {
+		log.Print("Uploading app on BrowserStack App Automate")
+	} else {
+		log.Print("Uploading test suite on BrowserStack App Automate")
 	}
 
 	payload := &bytes.Buffer{}
@@ -108,6 +115,12 @@ func upload(app_path string, endpoint string, username string, access_key string
 
 	if err != nil {
 		return "", errors.New(fmt.Sprintf(HTTP_ERROR, err))
+	}
+
+	if endpoint == APP_UPLOAD_ENDPOINT {
+		log.Print("Successfully uploaded the app")
+	} else {
+		log.Print("Successfully uploaded the test suite")
 	}
 
 	return string(body), nil
