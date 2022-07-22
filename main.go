@@ -22,8 +22,12 @@ func main() {
 		failf(UPLOAD_APP_ERROR, "invalid credentials")
 	}
 
-	if android_app == "" || test_suite == "" {
-		failf(FILE_NOT_AVAILABLE_ERROR)
+	if android_app == "" {
+		failf(AUT_NOT_FOUND)
+	}
+
+	if test_suite == "" {
+		failf(TEST_SUITE_NOT_FOUND)
 	}
 
 	log.Print("Starting the build on BrowserStack App Automate")

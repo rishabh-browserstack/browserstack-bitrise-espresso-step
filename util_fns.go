@@ -212,7 +212,6 @@ func printBuildStatus(build_details map[string]interface{}) {
 	data := [][]string{}
 
 	if len(devices) == 1 {
-
 		sessions := devices[0].(map[string]interface{})["sessions"].([]interface{})[0].(map[string]interface{})
 
 		session_status := sessions["status"].(string)
@@ -226,15 +225,12 @@ func printBuildStatus(build_details map[string]interface{}) {
 		if session_status == "passed" {
 			result := fmt.Sprintf("PASSED (%v/%v passed)", passed_test, total_test)
 			data = append(data, []string{build_id.(string), device_name, result})
-
 		}
 
 		if session_status == "failed" || session_status == "error" {
 			result := fmt.Sprintf("FAILED (%v/%v passed)", passed_test, total_test)
 			data = append(data, []string{build_id.(string), device_name, result})
-
 		}
-
 	} else {
 		for i := 0; i < len(devices); i++ {
 			sessions := devices[i].(map[string]interface{})["sessions"].([]interface{})[0].(map[string]interface{})
@@ -250,13 +246,11 @@ func printBuildStatus(build_details map[string]interface{}) {
 			if session_status == "passed" {
 				result := fmt.Sprintf("PASSED (%v/%v passed)", passed_test, total_test)
 				data = append(data, []string{build_id.(string), device_name, result})
-
 			}
 
 			if session_status == "failed" || session_status == "error" {
 				result := fmt.Sprintf("FAILED (%v/%v passed)", passed_test, total_test)
 				data = append(data, []string{build_id.(string), device_name, result})
-
 			}
 		}
 	}
@@ -267,6 +261,6 @@ func printBuildStatus(build_details map[string]interface{}) {
 	for _, v := range data {
 		table.Append(v)
 	}
-	table.Render()
 
+	table.Render()
 }

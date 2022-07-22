@@ -15,8 +15,12 @@ import (
 )
 
 func build(app_url string, test_suite_url string, username string, access_key string) (string, error) {
-	if app_url == "" || test_suite_url == "" {
-		return "", errors.New(FILE_NOT_AVAILABLE_ERROR)
+	if app_url == "" {
+		return "", errors.New(AUT_NOT_FOUND)
+	}
+
+	if test_suite_url == "" {
+		return "", errors.New(TEST_SUITE_NOT_FOUND)
 	}
 
 	payload_values := createBuildPayload()
@@ -55,6 +59,14 @@ func build(app_url string, test_suite_url string, username string, access_key st
 
 // this function uploads both app and test suite
 func upload(app_path string, endpoint string, username string, access_key string) (string, error) {
+	FILE_NOT_AVAILABLE_ERROR := ""
+
+	if endpoint == APP_UPLOAD_ENDPOINT {
+		FILE_NOT_AVAILABLE_ERROR = AUT_NOT_FOUND
+	} else {
+		FILE_NOT_AVAILABLE_ERROR = TEST_SUITE_NOT_FOUND
+	}
+
 	if app_path == "" {
 		return "", errors.New(FILE_NOT_AVAILABLE_ERROR)
 	}
