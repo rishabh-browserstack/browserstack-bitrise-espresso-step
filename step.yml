@@ -72,7 +72,7 @@ inputs:
       is_required: true
       is_sensitive: true
       description: Username of the BrowserStack account
-      category: "Authentication"
+      # category: "Authentication"
   - browserstack_accesskey: 
     opts:
       title: "BrowserStack accesskey"
@@ -80,7 +80,7 @@ inputs:
       is_required: true
       is_sensitive: true
       description: Access Key of the BrowserStack account
-      category: "Authentication"
+      # category: "Authentication"
       
   # APK's
   - android_app_under_test: 
@@ -90,7 +90,7 @@ inputs:
       is_expand: true
       is_required: true
       description: Path of the app (.apk) file
-      category: "App & Test Suite"
+      # category: "App & Test Suite"
   - espresso_test_suite: 
     opts:
       title: "Espresso test suite"
@@ -98,18 +98,14 @@ inputs:
       is_expand: true
       is_required: true
       description: Path of the test suite (.apk) file
-      category: "App & Test Suite"
+      # category: "App & Test Suite"
       
   # Devices
   - devices_list: 
     opts:
       title: "Devices"
       summary: |
-        Name of one or more device-OS combination in new line from the [device list](https://www.browserstack.com/list-of-browsers-and-platforms/app_automate) . For example:
-        
-        `Samsung Galaxy S9 Plus-9.0`
-        
-        `Google Pixel 3a-9.0`
+        Name of one or more device-OS combination in new line from the [device list](https://www.browserstack.com/list-of-browsers-and-platforms/app_automate).
       description: |
         Name of one or more device-OS combination in new line 
         For example:
@@ -119,7 +115,7 @@ inputs:
         `Google Pixel 3a-9.0`
       is_expand: true
       is_required: true
-      category: "Devices"
+      # category: "Devices"
       
   # Debug logs inputs
   - instrumentation_logs: true
